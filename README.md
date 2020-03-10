@@ -167,7 +167,7 @@ Build a small Java command line app that operates with your Todo API.
  
  ###### In the following procedure you will connect to your Droplet with SSH, and manually install all required dependencies.
  ###### DigitalOcean is an easy-to-use provider of virtual servers. They offer configurable compute units of various sizes, called Droplets.
-* Visit [Digital Ocean Website](https://www.digitalocean.com/.) and Sign Up.
+* If you haven't already, you need to start by creating an account at Digital Ocean. Follow this [link](https://www.digitalocean.com/?refcode=6a75ff01f865&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=CopyPaste) and register an account.
 * After Sign-In, in order to create a Droplet click Create -> Droplets -> Marketplace -> See all Marketplace Apps -> Search Docker -> Create Docker Droplet. Default configurations of the droplet can be changed if it's required.  
                    ![Eclipse download](create_droplet.png) 
                    ![clickMarket](clickMarketplace.JPG) 
@@ -217,3 +217,9 @@ Build a small Java command line app that operates with your Todo API.
 * Test if the the deployment was successful by accessing the following address : http://localhost:8080 in any desired browser.
 
 > Conclusion : Now we have our sample web application dockerized and pushed to a docker repository. Any system with a docker client installed can pull this docker image and run the web application instantly.
+
+  
+  
+__If you are using Windows OS you can create a ssh connection with the following tools:__  
+ * Putty - [download link](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html)  
+ * MobaXterm - [download link](https://mobaxterm.mobatek.net/download-home-edition.html)
