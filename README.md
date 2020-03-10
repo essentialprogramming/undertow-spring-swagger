@@ -168,13 +168,17 @@ Build a small Java command line app that operates with your Todo API.
  ###### In the following procedure you will connect to your Droplet with SSH, and manually install all required dependencies.
  ###### DigitalOcean is an easy-to-use provider of virtual servers. They offer configurable compute units of various sizes, called Droplets.
 * Visit [Digital Ocean Website](https://www.digitalocean.com/.) and Sign Up.
-* After Sign-In, in order to create a Droplet click Create -> Droplets. Default configurations of the droplet can be changed if it's required.  
-                   ![Eclipse download](create_droplet.png)
+* After Sign-In, in order to create a Droplet click Create -> Droplets -> Marketplace -> See all Marketplace Apps -> Search Docker -> Create Docker Droplet. Default configurations of the droplet can be changed if it's required.  
+                   ![Eclipse download](create_droplet.png) 
+                   ![clickMarket](clickMarketplace.JPG) 
+                   ![createDockerDroplet](createDockerDroplet.JPG)
 * Create Droplet.
 * After the Droplet is created you will receive and email where IP Address,Username and Password is specified.
 * Create a ssh connection by executing the following unix command :  
     ```ssh username@IPAddress```  
 * You will be asked to provide the password received via e-mail. After that you can change it.              
+
+ ###### If you already create a Droplet with Docker you can skip this step to install Docker on Linux
 * After you are connected, create a new shell script file, using the following command :  
  ```vi install-docker.sh```
  and paste the following code : 
@@ -206,6 +210,7 @@ Build a small Java command line app that operates with your Todo API.
 ### Digital Ocean deployment 
 * Create a new ssh connection if the old connection to the Digital Ocean Droplet is not opened anymore.  
   ```ssh username@IPAddress```
+* In order to pull the docker image from docker repository, first we have to login : ```docker login```
 * Pull the image previously pushed into docker repository and run it with the following commands :  
 ```docker pull docker_username/image_name:latest```  
 ```docker run -p 8080:8080 docker_username/image_name:latest```
