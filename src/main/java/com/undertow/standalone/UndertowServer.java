@@ -1,7 +1,5 @@
 package com.undertow.standalone;
 
-import com.config.ContextLoaderListenerInstanceFactory;
-import com.config.DispatcherServletInstanceFactory;
 import com.server.Server;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
@@ -12,26 +10,18 @@ import io.undertow.server.handlers.PathHandler;
 import io.undertow.server.handlers.StuckThreadDetectionHandler;
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.ResourceHandler;
-import io.undertow.servlet.api.DeploymentInfo;
-import io.undertow.servlet.api.DeploymentManager;
-import io.undertow.servlet.api.ListenerInfo;
-import io.undertow.servlet.api.ServletInfo;
-import io.undertow.websockets.WebSocketConnectionCallback;
-import io.undertow.websockets.WebSocketProtocolHandshakeHandler;
-import io.undertow.websockets.core.AbstractReceiveListener;
-import io.undertow.websockets.core.BufferedTextMessage;
-import io.undertow.websockets.core.WebSocketChannel;
-import io.undertow.websockets.core.WebSockets;
-import io.undertow.websockets.spi.WebSocketHttpExchange;
+import io.undertow.servlet.api.*;
+import io.undertow.servlet.util.ImmediateInstanceFactory;
 import org.springframework.web.context.ContextLoaderListener;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import javax.servlet.ServletException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static com.config.ApplicationContextFactory.getSpringApplicationContext;
 import static com.util.cloud.DeploymentConfiguration.getProperty;
-import static io.undertow.Handlers.websocket;
 import static io.undertow.servlet.Servlets.*;
 
 
@@ -50,29 +40,28 @@ public class UndertowServer {
         this.deploymentName = deploymentName;
     }
 
-    private static ServletInfo createSpringServlet() {
-
-        return servlet("DispatcherServlet", DispatcherServlet.class,
-                new DispatcherServletInstanceFactory())
+    private static ServletInfo createDispatcherServlet(WebApplicationContext context) {
+        InstanceFactory<DispatcherServlet> factory = new ImmediateInstanceFactory<>(new DispatcherServlet(context));
+        return servlet("DispatcherServlet", DispatcherServlet.class, factory)
                 .addMapping("/")
                 .setLoadOnStartup(1)
                 .setAsyncSupported(true);
     }
 
-    private static ListenerInfo createContextLoaderListener() {
-        return new ListenerInfo(ContextLoaderListener.class,
-                new ContextLoaderListenerInstanceFactory());
+    private static ListenerInfo createContextLoaderListener(WebApplicationContext context) {
+        InstanceFactory<ContextLoaderListener> factory = new ImmediateInstanceFactory<>(new ContextLoaderListener(context));
+        return new ListenerInfo(ContextLoaderListener.class, factory);
     }
 
     private HttpHandler bootstrap() throws ServletException {
         final DeploymentInfo servletBuilder = deployment()
                 .setClassLoader(Server.class.getClassLoader())
                 .setContextPath("/")
-                .addListeners(createContextLoaderListener())
+                .addListeners(createContextLoaderListener(getSpringApplicationContext()))
                 .setResourceManager(new ClassPathResourceManager(Server.class.getClassLoader(), "webapp/resources"))
                 .addWelcomePage("index.html")
                 .setDeploymentName(deploymentName)
-                .addServlets(createSpringServlet());
+                .addServlet(createDispatcherServlet(getSpringApplicationContext()));
 
         final DeploymentManager manager = defaultContainer().addDeployment(servletBuilder);
         manager.deploy();
